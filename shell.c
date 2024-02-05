@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <signal.h>
+
 
 // Function to read a line from stdin
 char* readLine(void) {
@@ -88,9 +90,20 @@ void loop(void) {
     } while (status);
 }
 
+void sigintHandler(int sig_num) {
+    // Reset handler to catch SIGINT next time
+    signal(SIGINT, sigintHandler);
+    printf("\nCannot be terminated using Ctrl+C\n");
+    fflush(stdout);
+}
+
+
 // Main entry point of the program
 int main(int argc, char** argv) {
     // Load config files, if any.
+
+     // Setup the signal handler
+    signal(SIGINT, sigintHandler);
 
     // Run command loop.
     loop();
